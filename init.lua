@@ -98,6 +98,12 @@ vim.g.have_nerd_font = false
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Set default indentation (fallback when guess-indent can't determine)
+vim.o.expandtab = true    -- Use spaces instead of tabs
+vim.o.tabstop = 2         -- Tab width of 2 spaces
+vim.o.softtabstop = 2     -- Soft tab stops at 2 spaces
+vim.o.shiftwidth = 2      -- Indent width of 2 spaces
+
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -727,9 +733,8 @@ require('lazy').setup({
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
+        -- Enhanced TypeScript/JavaScript LSP configuration
         ts_ls = {
-          -- Optional: add custom settings here
           settings = {
             typescript = {
               inlayHints = {
@@ -737,6 +742,49 @@ require('lazy').setup({
                 includeInlayParameterNameHintsWhenArgumentMatchesName = false,
                 includeInlayFunctionParameterTypeHints = true,
                 includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+              },
+              preferences = {
+                importModuleSpecifier = 'relative',
+                importModuleSpecifierEnding = 'minimal',
+                quotePreference = 'auto',
+              },
+              suggest = {
+                includeCompletionsForModuleExports = true,
+                includeAutomaticOptionalChainCompletions = true,
+              },
+            },
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+              },
+              preferences = {
+                importModuleSpecifier = 'relative',
+                importModuleSpecifierEnding = 'minimal',
+                quotePreference = 'auto',
+              },
+            },
+          },
+        },
+        
+        -- ESLint LSP for enhanced JavaScript/TypeScript linting
+        eslint = {
+          settings = {
+            workingDirectories = { mode = 'auto' },
+            format = { enable = true }, -- Enable ESLint formatting
+            codeAction = {
+              disableRuleComment = {
+                enable = true,
+                location = 'separateLine',
+              },
+              showDocumentation = {
+                enable = true,
               },
             },
           },
@@ -829,10 +877,17 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        -- JavaScript/TypeScript formatting
         typescript = { 'prettier' },
         javascript = { 'prettier' },
         typescriptreact = { 'prettier' },
         javascriptreact = { 'prettier' },
+        -- Web development formats
+        json = { 'prettier' },
+        css = { 'prettier' },
+        scss = { 'prettier' },
+        html = { 'prettier' },
+        markdown = { 'prettier' },
         -- Enhanced Python formatting with Ruff (fast) + fallback
         python = { 'ruff_format', 'ruff_organize_imports' },
         -- Alternative: python = { 'isort', 'black' }, -- uncomment if you prefer black
@@ -1007,7 +1062,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'css', 'diff', 'html', 'javascript', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'tsx', 'typescript', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       -- Prevent installation conflicts
