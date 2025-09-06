@@ -109,6 +109,106 @@ return {
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
+          -- Show hover documentation for the word under your cursor.
+          map('K', vim.lsp.buf.hover, 'Hover Documentation')
+
+          -- Python-specific LSP keybindings
+          if vim.bo[event.buf].filetype == 'python' then
+            -- Organize imports
+            map('<leader>oi', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'source.organizeImports')
+                end,
+                apply = true,
+              })
+            end, '[O]rganize [I]mports')
+            
+            -- Add missing imports
+            map('<leader>ai', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'quickfix')
+                end,
+                apply = true,
+              })
+            end, '[A]dd missing [I]mport')
+            
+            -- Extract method/function
+            map('<leader>em', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'refactor.extract')
+                end,
+                apply = false,
+              })
+            end, '[E]xtract [M]ethod', { 'n', 'v' })
+          end
+
+          -- TypeScript/JavaScript-specific LSP keybindings
+          local ts_filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' }
+          if vim.tbl_contains(ts_filetypes, vim.bo[event.buf].filetype) then
+            -- Organize imports
+            map('<leader>oi', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'source.organizeImports')
+                end,
+                apply = true,
+              })
+            end, '[O]rganize [I]mports')
+            
+            -- Add missing imports
+            map('<leader>ai', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'source.addMissingImports')
+                end,
+                apply = true,
+              })
+            end, '[A]dd missing [I]mports')
+            
+            -- Remove unused imports
+            map('<leader>ru', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'source.removeUnused')
+                end,
+                apply = true,
+              })
+            end, '[R]emove [U]nused imports')
+            
+            -- Fix all auto-fixable problems
+            map('<leader>fa', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.kind and string.match(action.kind, 'source.fixAll')
+                end,
+                apply = true,
+              })
+            end, '[F]ix [A]ll')
+            
+            -- Extract to constant
+            map('<leader>ec', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.title and string.match(action.title, 'Extract to constant')
+                end,
+                apply = false,
+              })
+            end, '[E]xtract [C]onstant', { 'n', 'v' })
+            
+            -- Extract to function
+            map('<leader>ef', function()
+              vim.lsp.buf.code_action({
+                filter = function(action)
+                  return action.title and string.match(action.title, 'Extract to function')
+                end,
+                apply = false,
+              })
+            end, '[E]xtract [F]unction', { 'n', 'v' })
+          end
+
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
           ---@param method vim.lsp.protocol.Method
