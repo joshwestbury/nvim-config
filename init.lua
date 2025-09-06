@@ -682,13 +682,41 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {
+        -- Python LSP Configuration - using pylsp + ruff for optimal experience
+        pylsp = {
           settings = {
-            python = {
-              analysis = {
-                autoSearchPaths = true,
-                useLibraryCodeForTypes = true,
-                diagnosticMode = 'workspace',
+            pylsp = {
+              plugins = {
+                -- Disable plugins that conflict with ruff
+                pycodestyle = { enabled = false },
+                mccabe = { enabled = false },
+                pyflakes = { enabled = false },
+                flake8 = { enabled = false },
+                
+                -- Enable useful plugins
+                pylsp_mypy = { enabled = true },
+                rope_autoimport = { enabled = true },
+                rope_completion = { enabled = true },
+                
+                -- Formatting (let conform.nvim handle this)
+                autopep8 = { enabled = false },
+                yapf = { enabled = false },
+              },
+            },
+          },
+        },
+        
+        -- Ruff LSP for ultra-fast Python linting and formatting
+        ruff = {
+          init_options = {
+            settings = {
+              lint = { 
+                enable = true,
+                args = {"--extend-select", "I"}, -- Enable import sorting
+              },
+              format = { 
+                enable = true,
+                args = {"--line-length", "88"},
               },
             },
           },
@@ -750,9 +778,11 @@ require('lazy').setup({
         'stylua',
         'prettier',
         'eslint_d',
-        'black',
-        'isort',
-        'ruff',
+        -- Python tools
+        'ruff',           -- Fast Python linter/formatter
+        'black',          -- Python formatter (backup)
+        'isort',          -- Import sorting (backup)
+        'mypy',           -- Type checking
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -803,7 +833,9 @@ require('lazy').setup({
         javascript = { 'prettier' },
         typescriptreact = { 'prettier' },
         javascriptreact = { 'prettier' },
-        python = { 'isort', 'black' },
+        -- Enhanced Python formatting with Ruff (fast) + fallback
+        python = { 'ruff_format', 'ruff_organize_imports' },
+        -- Alternative: python = { 'isort', 'black' }, -- uncomment if you prefer black
       },
     },
   },
@@ -975,9 +1007,11 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
+      -- Prevent installation conflicts
+      sync_install = false,
       highlight = {
         enable = true,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
