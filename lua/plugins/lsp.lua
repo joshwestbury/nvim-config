@@ -112,6 +112,24 @@ return {
           -- Show hover documentation for the word under your cursor.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
 
+          -- Standard LSP keybindings (complement the existing telescope-based ones)
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+          map('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+          map('<C-k>', vim.lsp.buf.signature_help, 'Signature Help')
+          map('<space>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+          map('<space>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+          map('<space>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          end, '[W]orkspace [L]ist Folders')
+          map('<space>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+          map('<space>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<space>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'v' })
+          map('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
+          map('<space>f', function()
+            vim.lsp.buf.format { async = true }
+          end, '[F]ormat buffer')
+
           -- Python-specific LSP keybindings
           if vim.bo[event.buf].filetype == 'python' then
             -- Organize imports
@@ -263,6 +281,34 @@ return {
         end,
       })
 
+      -- LSP Handlers Configuration
+      -- Enhanced hover popup styling to match Telescope
+      vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+        border = 'rounded',
+        max_width = 80,
+        max_height = 20,
+        focusable = false,
+        close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter' },
+      })
+
+      -- Customize signature help popup
+      vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+        border = 'rounded',
+        max_width = 80,
+        max_height = 15,
+        focusable = false,
+      })
+
+      -- Custom highlight groups for better LSP popup styling
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        group = vim.api.nvim_create_augroup('LspFloatStyle', { clear = true }),
+        callback = function()
+          -- Make hover popups blend better with the colorscheme
+          vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'TelescopeNormal' })
+          vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'TelescopeBorder' })
+        end,
+      })
+
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
@@ -344,7 +390,7 @@ return {
             settings = {
               lint = { 
                 enable = true,
-                args = {"--extend-select", "I"}, -- Enable import sorting
+                args = {"--extend-select", "I", "--ignore", "W391"}, -- Enable import sorting, ignore blank line at EOF
               },
               format = { 
                 enable = true,
