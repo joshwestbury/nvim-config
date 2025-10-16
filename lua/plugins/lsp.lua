@@ -1,4 +1,7 @@
 return {
+  -- JSON Schema Store for enhanced JSON support
+  { 'b0o/schemastore.nvim' },
+
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -462,6 +465,16 @@ return {
           },
         },
 
+        -- JSON Language Server
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require('schemastore').json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
+
         --
 
         lua_ls = {
@@ -498,6 +511,8 @@ return {
         'stylua',
         'prettier',
         'eslint_d',
+        -- JSON tools
+        'json-lsp',       -- JSON Language Server
         -- Python tools
         'ruff',           -- Fast Python linter/formatter
         'black',          -- Python formatter (backup)
