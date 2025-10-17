@@ -192,12 +192,6 @@ See [lua/README.md](lua/README.md) for complete details.
 :checkhealth
 ```
 
-## Known Issues & TODOs
-
-See [TODO.md](TODO.md) for a prioritized list of:
-- Duplicate configurations to remove
-- Planned optimizations (Python LSP, lazy-lock tracking)
-- Future enhancements (trouble.nvim, nvim-spectre, etc.)
 
 ## Acknowledgments
 
@@ -208,6 +202,11 @@ See [TODO.md](TODO.md) for a prioritized list of:
 ## License
 
 This configuration is based on kickstart.nvim (MIT License). My customizations are provided as-is for personal use.
+
+## Documentation
+
+- [📋 Full Keybindings Reference](KEYBINDINGS.md) - Complete keybinding cheatsheet
+- [🔧 Detailed Configuration Guide](lua/README.md) - In-depth documentation
 
 ## Getting Help
 
