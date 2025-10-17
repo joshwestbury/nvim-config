@@ -363,25 +363,15 @@ return {
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- Python LSP Configuration - using pylsp + ruff for optimal experience
-        pylsp = {
+        -- Python type checking and IntelliSense with basedpyright
+        basedpyright = {
           settings = {
-            pylsp = {
-              plugins = {
-                -- Disable plugins that conflict with ruff
-                pycodestyle = { enabled = false },
-                mccabe = { enabled = false },
-                pyflakes = { enabled = false },
-                flake8 = { enabled = false },
-                
-                -- Enable useful plugins
-                pylsp_mypy = { enabled = true },
-                rope_autoimport = { enabled = true },
-                rope_completion = { enabled = true },
-                
-                -- Formatting (let conform.nvim handle this)
-                autopep8 = { enabled = false },
-                yapf = { enabled = false },
+            basedpyright = {
+              analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "openFilesOnly",
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = "basic", -- or "standard", "strict"
               },
             },
           },
@@ -514,10 +504,10 @@ return {
         -- JSON tools
         'json-lsp',       -- JSON Language Server
         -- Python tools
+        'basedpyright',   -- Modern Python type checker and LSP
         'ruff',           -- Fast Python linter/formatter
         'black',          -- Python formatter (backup)
         'isort',          -- Import sorting (backup)
-        'mypy',           -- Type checking
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
