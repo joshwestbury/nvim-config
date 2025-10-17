@@ -85,6 +85,7 @@ return {
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      vim.keymap.set('n', '<leader>sC', builtin.commands, { desc = '[S]earch [C]ommands' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sF', function()
@@ -1439,6 +1440,18 @@ return {
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
     end,
+  },
+
+  -- Session management for restoring workspace layouts
+  {
+    'folke/persistence.nvim',
+    event = 'BufReadPre',
+    opts = {},
+    keys = {
+      { '<leader>qs', function() require('persistence').load() end, desc = 'Restore Session' },
+      { '<leader>ql', function() require('persistence').load({ last = true }) end, desc = 'Restore Last Session' },
+      { '<leader>qd', function() require('persistence').stop() end, desc = "Don't Save Current Session" },
+    },
   },
 
   -- Better diagnostics list with modern UI
