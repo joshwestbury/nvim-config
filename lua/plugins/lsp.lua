@@ -545,12 +545,22 @@ return {
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
+        -- Disable auto-format for very large files (performance)
+        if vim.api.nvim_buf_line_count(bufnr) > 10000 then
+          vim.notify("File too large, skipping auto-format", vim.log.levels.WARN)
+          return nil
+        end
+
+        -- Disable for specific filetypes if needed
         local disable_filetypes = { c = true, cpp = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
-        else
-          return { timeout_ms = 500, lsp_format = 'fallback' }
         end
+
+        return {
+          timeout_ms = 3000,        -- 3 second timeout (up from default 1s)
+          lsp_format = 'fallback',  -- Use LSP formatting if no conform formatter
+        }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
